@@ -7,6 +7,11 @@ module Hector
         channels[normalize(name)]
       end
 
+      def list_all
+        #channels.keys
+        channels.values
+      end
+
       def find_all_for_session(session)
         channels.values.find_all do |channel|
           channel.has_session?(session)

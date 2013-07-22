@@ -28,6 +28,7 @@ Hector supports a limited subset of IRC commands.
 - `PRIVMSG` and `NOTICE` -- Sends a message to another nickname or channel.
 - `TOPIC` -- Changes or returns the topic of a channel.
 - `NAMES` -- Shows a list of which nicknames are on a channel.
+- `LIST` -- Shows a list of public channels on the server.
 - `WHO` -- Like `NAMES`, but returns more information. (Your client probably sends this when it joins a channel.)
 - `WHOIS` -- Shows information about a nickname, including how long it has been connected.
 - `PART` -- Leaves a channel.
@@ -35,6 +36,9 @@ Hector supports a limited subset of IRC commands.
 - `INVITE` -- Invites another user to a channel.
 - `PING` -- (Your client uses this command to measure the speed of its connection to the server.)
 - `QUIT` -- Disconnects from the server.
+
+
+Added commands:
 
 
 ### Installation and usage

@@ -150,6 +150,19 @@ module Hector
       end
     end
 
+    test :"list command should send all channels" do
+      authenticated_connection.tap do |c|
+        c.receive_line "JOIN #test1"
+        c.receive_line "JOIN #test2"
+        c.receive_line "TOPIC #test2 :hello world"
+        c.receive_line "LIST"
+        assert_sent_to c, ":hector.irc 321 :Channel :Users Name"
+        assert_sent_to c, ":hector.irc 322 sam #test1 1 :No topic is set."
+        assert_sent_to c, ":hector.irc 322 sam #test2 1 :hello world"
+        assert_sent_to c, ":hector.irc 323 :End of /LIST"
+      end
+    end
+
     test :"topic command with text should set the channel topic" do
       authenticated_connections(:join => "#test") do |c1, c2|
         c1.receive_line "TOPIC #test :this is my topic"

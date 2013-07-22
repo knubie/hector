@@ -4,6 +4,7 @@ module Hector
     include Concerns::Presence
 
     include Commands::Join
+    include Commands::List
     include Commands::Mode
     include Commands::Names
     include Commands::Nick
