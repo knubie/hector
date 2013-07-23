@@ -45,7 +45,7 @@ module Hector
     end
 
     def user!(connection, username = "sam", realname = "Sam Stephenson")
-      connection.receive_line("USER #{username} * 0 :#{realname}")
+      connection.receive_line("USER #{username} 0 * :#{realname}")
     end
 
     def nick!(connection, nickname = "sam")

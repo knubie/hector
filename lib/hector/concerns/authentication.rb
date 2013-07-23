@@ -3,6 +3,7 @@ module Hector
     module Authentication
       def on_user
         @username = request.args.first
+        @hostname = "hector.irc"
         @realname = request.text
         authenticate
       end
@@ -46,7 +47,7 @@ module Hector
 
         def set_session
           if @identity && @nickname && !@session
-            @session = UserSession.create(@nickname, self, @identity, @realname)
+            @session = UserSession.create(@nickname, self, @identity, @realname, @hostname)
           end
         end
         

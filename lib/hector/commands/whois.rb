@@ -21,7 +21,7 @@ module Hector
       end
 
       def whois
-        "#{nickname} #{identity.username} #{Hector.server_name} * :#{realname}"
+        "#{nickname} #{identity.username} #{hostname} * :#{realname}"
       end
     end
   end

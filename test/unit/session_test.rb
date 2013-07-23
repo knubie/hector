@@ -143,7 +143,7 @@ module Hector
     end
 
     def create_session(nickname)
-      UserSession.create(nickname, connection, identity, "Real Name")
+      UserSession.create(nickname, connection, identity, "Real Name", 'google.com')
     end
 
     def session_names

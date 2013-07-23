@@ -1,20 +1,21 @@
 module Hector
   class UserSession < Session
-    attr_reader :connection, :identity, :realname
+    attr_reader :connection, :identity, :realname, :hostname
 
     class << self
-      def create(nickname, connection, identity, realname)
+      def create(nickname, connection, identity, realname, hostname)
         if find(nickname)
           raise NicknameInUse, nickname
         else
-          register UserSession.new(nickname, connection, identity, realname)
+          register UserSession.new(nickname, connection, identity, realname, hostname)
         end
       end
     end
 
-    def initialize(nickname, connection, identity, realname)
+    def initialize(nickname, connection, identity, realname, hostname)
       super(nickname)
       @connection = connection
+      @hostname   = hostname
       @identity   = identity
       @realname   = realname
       initialize_keep_alive

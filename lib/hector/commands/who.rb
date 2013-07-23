@@ -24,7 +24,8 @@ module Hector
       end
 
       def who
-        "#{username} #{Hector.server_name} #{Hector.server_name} #{nickname} H :0 #{realname}"
+        # <H|G> H = Here, G = Gone (Depending on user's away status)
+        "#{username} #{hostname} #{Hector.server_name} #{nickname} H :0 #{realname}"
       end
     end
   end

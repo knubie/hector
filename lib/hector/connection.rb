@@ -1,3 +1,4 @@
+require 'socket'
 module Hector
   class Connection < EventMachine::Protocols::LineAndTextProtocol
     include Concerns::Authentication
