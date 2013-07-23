@@ -3,7 +3,10 @@ module Hector
     include Concerns::KeepAlive
     include Concerns::Presence
 
+    include Commands::Away
+    include Commands::Invite
     include Commands::Join
+    include Commands::Kick
     include Commands::List
     include Commands::Mode
     include Commands::Names
@@ -18,8 +21,6 @@ module Hector
     include Commands::Topic
     include Commands::Who
     include Commands::Whois
-    include Commands::Away
-    include Commands::Invite
 
     attr_reader :nickname, :request, :response, :away_message
 
