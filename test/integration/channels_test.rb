@@ -78,6 +78,20 @@ module Hector
       end
     end
 
+    test :"channel operators can set channel mode flags" do
+      authenticated_connections(:join => "#test") do |c1|
+        c1.receive_line "MODE #test +s"
+        assert_sent_to c1, ":hector.irc 324 user1 #test +s"
+      end
+    end
+
+    test :"only channel operators can set channel modes" do
+      authenticated_connections(:join => "#test") do |c1, c2|
+        c2.receive_line "MODE #test +s"
+        assert_sent_to c2, ":hector.irc 482 #test You're not a channel operator."
+      end
+    end
+
     test :"users can be kicked from channels" do
       authenticated_connections(:join => "#test") do |c1, c2|
         c1.receive_line "KICK #test user2 :Get out"

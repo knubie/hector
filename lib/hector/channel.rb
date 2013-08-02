@@ -1,6 +1,6 @@
 module Hector
   class Channel
-    attr_reader :name, :topic, :user_sessions, :ops, :created_at
+    attr_reader :name, :topic, :user_sessions, :ops, :created_at, :modes
 
     class << self
       def find(name)
@@ -55,6 +55,7 @@ module Hector
       @name = name
       @user_sessions = []
       @ops = []
+      @modes = []
       @created_at = Time.now
     end
 
@@ -62,6 +63,12 @@ module Hector
       catch :stop do
         Session.broadcast_to(sessions, command, *args)
       end
+    end
+
+    def set_mode_flags(add, remove)
+      @modes = @modes + add
+      @modes = @modes - remove
+      @modes.uniq!
     end
 
     def change_topic(session, topic)

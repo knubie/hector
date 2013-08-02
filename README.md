@@ -38,6 +38,10 @@ Hector supports a limited subset of IRC commands.
 - `PING` -- (Your client uses this command to measure the speed of its connection to the server.)
 - `QUIT` -- Disconnects from the server.
 
+TODO:
+MODE <channel> (+osib)
+MODE <user> (+i)
+
 
 Added commands:
 
