@@ -92,6 +92,53 @@ module Hector
       end
     end
 
+    #test :"secret channels don't show up in LIST, NAMES, or WHOIS unless called by a user in that channel" do
+    #
+    test :"secret channels don't show up in WHOIS channel lists" do
+      authenticated_connections do |c1, c2|
+        c1.receive_line "JOIN #test"
+        c1.receive_line "MODE #test +s"
+        c1.receive_line "JOIN #test2"
+        c2.receive_line "WHOIS user1"
+        assert_sent_to c2, ":hector.irc 319 user2 user1 :#test2"
+      end
+    end
+
+    test :"users in secret channels don't show up in NAMES unless called by a user in that channel" do
+      authenticated_connections do |c1, c2|
+        c1.receive_line "JOIN #test"
+        c1.receive_line "MODE #test +s"
+        #c1.receive_line "JOIN #test2"
+        c1.receive_line "NAMES #test"
+        c2.receive_line "NAMES #test"
+        #c2.receive_line "NAMES #test2"
+
+        assert_sent_to c1, ":hector.irc 353 user1 = #test :@user1"
+        assert_sent_to c1, ":hector.irc 366 user1 #test :"
+
+        assert_not_sent_to c2, ":hector.irc 353 user2 = #test :@user1"
+        assert_sent_to c2, ":hector.irc 366 user2 #test :"
+      end
+    end
+
+    test :"secret channels don't show up in LIST unless called by a user in that channel" do
+      authenticated_connections do |c1, c2|
+        c1.receive_line "JOIN #test"
+        c1.receive_line "MODE #test +s"
+        c1.receive_line "JOIN #test2"
+        c2.receive_line "LIST"
+        c1.receive_line "LIST"
+        assert_sent_to c2, ":hector.irc 321 :Channel :Users Name"
+        assert_sent_to c2, ":hector.irc 322 user2 #test2 1 :No topic is set."
+        assert_not_sent_to c2, ":hector.irc 322 user2 #test 1 :No topic is set."
+        assert_sent_to c2, ":hector.irc 323 :End of /LIST"
+        assert_sent_to c1, ":hector.irc 321 :Channel :Users Name"
+        assert_sent_to c1, ":hector.irc 322 user1 #test 1 :No topic is set."
+        assert_sent_to c1, ":hector.irc 322 user1 #test2 1 :No topic is set."
+        assert_sent_to c1, ":hector.irc 323 :End of /LIST"
+      end
+    end
+
     test :"users can be kicked from channels" do
       authenticated_connections(:join => "#test") do |c1, c2|
         c1.receive_line "KICK #test user2 :Get out"

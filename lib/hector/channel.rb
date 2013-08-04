@@ -79,6 +79,10 @@ module Hector
       true
     end
 
+    def secret?
+      @modes.include?('s')
+    end
+
     def deliver(message_type, session, options)
       if has_session?(session)
         broadcast(message_type, name, options.merge(:except => session))
