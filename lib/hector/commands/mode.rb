@@ -44,22 +44,18 @@ module Hector
         end
 
         def parse_modes
-          regex = /(?:(?:\-([^\+\-]+))?(?:\+([^\+\-]+)))|(?:(?:\+([^\+\-]+))?(?:\-([^\+\-]+)))/
-          parsed_modes = regex.match(request.args[1])
-        # <channel> {[+|-]|o|s|i|k|b} [<user>] [<ban mask>]
-          channel_adds = parsed_modes[2]
+          # <channel> {[+|-]|o|s|i|k|b} [<user>] [<ban mask>]
+          channel_adds = /\+([^\+\-]+)/.match(request.args[1])
+          channel_removes = /\-([^\+\-]+)/.match(request.args[1])
+
+          channel_adds ||= ['']
+          channel_adds = channel_adds[1] || ''
           channel_adds = channel_adds.split('')
-          # TODO: make this not so retarded.
-          if parsed_modes[1].nil? and parsed_modes[4].nil?
-            channel_removes = ''
-          elsif parsed_modes[1].nil? and !parsed_modes[4].nil?
-            channel_removes = channel_removes[4]
-          elsif !parsed_modes[1].nil? and parsed_modes[4].nil?
-            channel_removes = channel_removes[1]
-          else
-            channel_removes = parsed_modes[1] + parsed_modes[4]
-          end
+
+          channel_removes ||= ['']
+          channel_removes = channel_removes[1] || ''
           channel_removes = channel_removes.split('')
+
           channel_adds.select! { |e| e =~ /[osikb]/ }
           channel_removes.select! { |e| e =~ /[osikb]/ }
           {
