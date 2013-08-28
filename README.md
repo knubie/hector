@@ -37,10 +37,12 @@ Hector supports a limited subset of IRC commands.
 - `INVITE` -- Invites another user to a channel.
 - `PING` -- (Your client uses this command to measure the speed of its connection to the server.)
 - `QUIT` -- Disconnects from the server.
+- `MODE` -- Supported channel modes: +osib, supported user modes: +i
 
 TODO:
-MODE <channel> (+osib)
-MODE <user> (+i)
+  MODE <channel> (+osib)
+  MODE <user> (+i)
+  message limit
 
 
 Added commands:

@@ -92,8 +92,6 @@ module Hector
       end
     end
 
-    #test :"secret channels don't show up in LIST, NAMES, or WHOIS unless called by a user in that channel" do
-    #
     test :"secret channels don't show up in WHOIS channel lists" do
       authenticated_connections do |c1, c2|
         c1.receive_line "JOIN #test"
