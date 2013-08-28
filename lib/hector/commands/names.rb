@@ -13,12 +13,6 @@ module Hector
         end
           respond_with("366", nickname, channel.name, :source => Hector.server_name, :text => "End of /NAMES list.")
       end
-
-      private
-        def in_channel?(channel)
-          channel.user_sessions.include?(self)
-        end
-
     end
   end
 end
