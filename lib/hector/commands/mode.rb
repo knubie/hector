@@ -18,6 +18,7 @@ module Hector
                 subject.set_mode_flags parse_modes[:channel_add_flags], parse_modes[:channel_remove_flags]
                 respond_with("324", nickname, subject.name, "+#{subject.modes.join('')}", :source => Hector.server_name)
                 respond_with("329", nickname, subject.name, subject.created_at.to_i, :source => Hector.server_name)
+                subject.broadcast(:mode, subject.name, :source => source, :text => request.args[1])
               else
                 respond_with("482", subject.name, "You're not a channel operator.", :source => Hector.server_name)
               end
