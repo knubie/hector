@@ -36,8 +36,15 @@ module Hector
 
       protected
         def deliver_welcome_message
-          respond_with("001", nickname, :text => "Welcome to IRC")
-          respond_with("422", :text => "MOTD File is missing")
+          respond_with("001", nickname, :text => "Welcome to")
+          respond_with("375")
+          #respond_with("422", :text => "MOTD File is missing")
+          respond_with("372", :text => "     _     ____     __                 ")
+          respond_with("372", :text => "    (_)___/ / /__  / /__________  ____ ")
+          respond_with("372", :text => "   / / __  / / _ \\/ __/ ___/ __ \\/ __ \\")
+          respond_with("372", :text => "  / / /_/ / /  __/ /_/ /  / /_/ / / / /")
+          respond_with("372", :text => " /_/\\__,_/_/\\___/\\__/_/   \\____/_/ /_/ ")
+          respond_with("376")
         end
 
         def deliver_quit_message
