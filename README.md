@@ -32,21 +32,19 @@ Hector supports a limited subset of IRC commands.
 - `WHO` -- Like `NAMES`, but returns more information. (Your client probably sends this when it joins a channel.)
 - `WHOIS` -- Shows information about a nickname, including how long it has been connected.
 - `PART` -- Leaves a channel.
-- `KICK` -- Forcibly removes a user from the channel. (You must be a channel operator to use this command.)
+- `KICK` -- Forcibly removes a user from the channel.
 - `AWAY` -- Marks or unmarks you as being away.
 - `INVITE` -- Invites another user to a channel.
 - `PING` -- (Your client uses this command to measure the speed of its connection to the server.)
 - `QUIT` -- Disconnects from the server.
 - `MODE` -- Supported channel modes: +osib, supported user modes: +i
+- `SECRET` -- Marks the channel as secret. The channel will not appear in channel listings, the NAMES command will not list nicknames for users who are not channel members, and the channel will not appear in WHOIS unless WHOIS is called by a fellow channel member.
 
 TODO:
+  limit invite command to operators of private channels?
   MODE <channel> (+osib)
   MODE <user> (+i)
   message limit
-
-
-Added commands:
-
 
 ### Installation and usage
 

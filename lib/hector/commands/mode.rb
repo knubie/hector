@@ -11,9 +11,9 @@ module Hector
             respond_with("329", nickname, subject.name, subject.created_at.to_i, :source => Hector.server_name)
           elsif requesting_bans?
             respond_with("368", nickname, subject.name, :text => "End of Channel Ban List", :source => Hector.server_name)
-          else
-            if channels.include?(subject)
-              if subject.ops.include?(self)
+          else # Setting modes.
+            if channels.include?(subject) # self is in channel
+              if subject.ops.include?(self) # self is an op
                 # Set channel modes
                 subject.set_mode_flags parse_modes[:channel_add_flags], parse_modes[:channel_remove_flags]
                 respond_with("324", nickname, subject.name, "+#{subject.modes.join('')}", :source => Hector.server_name)
@@ -26,7 +26,7 @@ module Hector
               respond_with("442", request.args.first, "You're not on that channel", :source => Hector.server_name)
             end
           end
-        else
+        else # nickname
           if requesting_modes?
             respond_with("221", nickname, "+", :source => Hector.server_name)
           else
@@ -57,10 +57,10 @@ module Hector
           channel_removes = channel_removes[1] || ''
           channel_removes = channel_removes.split('')
 
-          channel_adds.select! { |e| e =~ /[osikb]/ }
-          channel_removes.select! { |e| e =~ /[osikb]/ }
+          channel_adds.select! { |e| e =~ /[osikbm]/ }
+          channel_removes.select! { |e| e =~ /[osikbm]/ }
           {
-            :channel_add_flags => channel_adds.select { |e| e =~ /[si]/ },
+            :channel_add_flags => channel_adds.select { |e| e =~ /[sim]/ },
             :channel_remove_flags => channel_removes.select { |e| e =~ /[sik]/ },
             :channel_add_commands => channel_adds.select { |e| e =~ /[obk]/ },
             :channel_remove_commands => channel_adds.select { |e| e =~ /[ob]/ },
