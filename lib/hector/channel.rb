@@ -83,6 +83,10 @@ module Hector
       @modes.include?('s')
     end
 
+    def invite_only?
+      @modes.include?('i')
+    end
+
     def deliver(message_type, session, options)
       if has_session?(session)
         broadcast(message_type, name, options.merge(:except => session))

@@ -97,7 +97,7 @@ module Hector
 
     def assert_welcomed(connection)
       assert_sent_to connection, ":hector.irc 001 #{connection_nickname(connection)} :"
-      assert_sent_to connection, ":hector.irc 422 :"
+      assert_sent_to connection, ":hector.irc 372 :"
     end
 
     def assert_no_such_nick_or_channel(connection, nickname)

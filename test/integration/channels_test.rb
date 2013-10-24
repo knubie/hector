@@ -137,6 +137,20 @@ module Hector
       end
     end
 
+    test :"only ops can invite users to +i channels" do
+      authenticated_connections do |c1, c2, c3|
+        c1.receive_line "JOIN #test"
+        c1.receive_line "MODE #test +i"
+        c2.receive_line "JOIN #test"
+
+        c1.receive_line "INVITE user3 #test :Join us"
+        assert_sent_to c1, ":hector.irc 341 user3 #test"
+        
+        c2.receive_line "INVITE user3 #test :Join us"
+        assert_sent_to c2, ":hector.irc 482 #test You must be a channel operator to invite users."
+      end
+    end
+
     test :"users can be kicked from channels" do
       authenticated_connections(:join => "#test") do |c1, c2|
         c1.receive_line "KICK #test user2 :Get out"
