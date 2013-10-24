@@ -11,7 +11,6 @@ module Hector
         
         c2.receive_line "JOIN #test"
         assert_sent_to c1, ":user2!sam@hector.irc JOIN :#test"
-        assert_sent_to c2, ":user2!sam@hector.irc JOIN :#test"
       end
     end
     
@@ -140,14 +139,28 @@ module Hector
     test :"only ops can invite users to +i channels" do
       authenticated_connections do |c1, c2, c3|
         c1.receive_line "JOIN #test"
-        c1.receive_line "MODE #test +i"
         c2.receive_line "JOIN #test"
+        c1.receive_line "MODE #test +i"
 
         c1.receive_line "INVITE user3 #test :Join us"
         assert_sent_to c1, ":hector.irc 341 user3 #test"
         
         c2.receive_line "INVITE user3 #test :Join us"
         assert_sent_to c2, ":hector.irc 482 #test You must be a channel operator to invite users."
+      end
+    end
+
+    test :"users cannot join +i channels unless they're invited" do
+      authenticated_connections do |c1, c2, c3|
+        c1.receive_line "JOIN #test"
+        c1.receive_line "MODE #test +i"
+        c1.receive_line "INVITE user3 #test :Join us"
+
+        c2.receive_line "JOIN #test"
+        assert_sent_to c2, ":hector.irc 473 #test You must be invited to join this channel."
+
+        c3.receive_line "JOIN #test"
+        assert_sent_to c3, ":user3!sam@hector.irc JOIN :#test"
       end
     end
 

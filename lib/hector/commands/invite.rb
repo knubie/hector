@@ -10,6 +10,7 @@ module Hector
             if !session.channels.include?(channel) # Invitee is not in the channel.
               if !channel.invite_only? || (channel.invite_only? && channel.ops.include?(self))
                 session.deliver(:invite, self, :source => source, :text => request.text)
+                channel.invite(session)
                 respond_with("341", nickname, channel.name, :source => Hector.server_name)
               else
                 respond_with("482", channel.name, "You must be a channel operator to invite users.", :source => Hector.server_name)
