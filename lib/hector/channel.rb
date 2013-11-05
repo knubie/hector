@@ -72,6 +72,16 @@ module Hector
       @modes.uniq!
     end
 
+    def set_op(session)
+      ops.push(session)
+    end
+
+    def ban(session)
+    end
+
+    def set_key(key)
+    end
+
     def change_topic(session, topic)
       @topic = { :body => topic, :nickname => session.nickname, :time => Time.now }
     end

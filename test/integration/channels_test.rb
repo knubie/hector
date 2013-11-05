@@ -91,6 +91,21 @@ module Hector
       end
     end
 
+    test :"channel operators can op other channel members" do
+      authenticated_connections(:join => "#test") do |c1, c2|
+        c1.receive_line "MODE #test +o user2"
+        c2.receive_line "NAMES #test"
+        assert_sent_to c2, ":hector.irc 353 user2 = #test :@user1 @user2"
+      end
+    end
+
+    test :"executing a mode command without sufficient parameters should return 461" do
+      authenticated_connections(:join => "#test") do |c1|
+        c1.receive_line "MODE #test +o"
+        assert_sent_to c1, ":hector.irc 461 #test Not enough parameters."
+      end
+    end
+
     test :"secret channels don't show up in WHOIS channel lists" do
       authenticated_connections do |c1, c2|
         c1.receive_line "JOIN #test"
@@ -449,13 +464,6 @@ module Hector
         assert_not_sent_to c, ":hector.irc 324"
         assert_not_sent_to c, ":hector.irc 329"
         assert_not_sent_to c, ":hector.irc 368"
-      end
-    end
-
-    test :"requesting modes for a user should return 221" do
-      authenticated_connection.tap do |c|
-        c.receive_line "MODE sam"
-        assert_sent_to c, ":hector.irc 221"
       end
     end
 
