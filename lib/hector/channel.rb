@@ -1,6 +1,6 @@
 module Hector
   class Channel
-    attr_reader :name, :topic, :user_sessions, :ops, :created_at, :modes, :invites
+    attr_reader :name, :topic, :user_sessions, :ops, :created_at, :modes, :invites, :op_nicks
 
     class << self
       def find(name)
@@ -55,6 +55,7 @@ module Hector
       @name = name
       @user_sessions = []
       @ops = []
+      @op_nicks = []
       @modes = []
       @invites = []
       @created_at = Time.now
@@ -74,6 +75,7 @@ module Hector
 
     def set_op(session)
       ops.push(session)
+      op_nicks.push(session.name)
     end
 
     def ban(session)
@@ -116,7 +118,9 @@ module Hector
 
     def join(session)
       return if has_session?(session)
-      ops.push(session) if user_sessions.empty?
+      if user_sessions.empty? || op_nicks.include?(session.name)
+        set_op(session)
+      end
       user_sessions.push(session)
     end
 
