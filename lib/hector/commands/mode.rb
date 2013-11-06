@@ -7,7 +7,7 @@ module Hector
 
         if subject.channel?
           if requesting_modes?
-            respond_with("324", nickname, subject.name, "+#{subject.modes.join('')}", :source => Hector.server_name)
+            respond_with("324", nickname, subject.name, "+#{subject.modes.join}", :source => Hector.server_name)
             respond_with("329", nickname, subject.name, subject.created_at.to_i, :source => Hector.server_name)
           elsif requesting_bans?
             respond_with("368", nickname, subject.name, :text => "End of Channel Ban List", :source => Hector.server_name)
@@ -18,7 +18,7 @@ module Hector
                 subject.set_mode_flags parse_modes[:channel_add_flags], parse_modes[:channel_remove_flags]
                 respond_with("324", nickname, subject.name, "+#{subject.modes.join('')}", :source => Hector.server_name)
                 respond_with("329", nickname, subject.name, subject.created_at.to_i, :source => Hector.server_name)
-                subject.broadcast(:mode, subject.name, :source => source, :text => request.args[1])
+                subject.broadcast(:mode, subject.name, :source => source, :text => request.args[1..-1].join(' '))
                 # Execute channel mode commands
                 # for +o :
                 parse_modes[:channel_add_commands].each_with_index do |mode, index|
@@ -35,6 +35,7 @@ module Hector
                     else
                       respond_with("472", subject.name, "Unknown mode.", :source => Hector.server_name)
                     end
+                    #respond_with("221", nickname, subject.name, "+#{subject.modes.join('')}", :source => Hector.server_name)
                   else # No parameter.
                     respond_with("461", subject.name, "Not enough parameters.", :source => Hector.server_name)
                   end
