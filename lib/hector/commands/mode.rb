@@ -18,7 +18,7 @@ module Hector
                 subject.set_mode_flags parse_modes[:channel_add_flags], parse_modes[:channel_remove_flags]
                 respond_with("324", nickname, subject.name, "+#{subject.modes.join('')}", :source => Hector.server_name)
                 respond_with("329", nickname, subject.name, subject.created_at.to_i, :source => Hector.server_name)
-                subject.broadcast(:mode, subject.name, :source => source, :text => request.args[1..-1].join(' '))
+                subject.broadcast(:mode, subject.name, *request.args[1..-1], :source => source)
                 # Execute channel mode commands
                 # for +o :
                 parse_modes[:channel_add_commands].each_with_index do |mode, index|
