@@ -37,6 +37,7 @@ module Hector
       protected
         def deliver_welcome_message
           respond_with("001", nickname, :text => "Welcome to")
+          respond_with("005", nickname, "PREFIX=(ov)@+", "CHANTYPES=#&", :text => "are supported by this server")
           respond_with("375")
           #respond_with("422", :text => "MOTD File is missing")
           respond_with("372", :text => "     _     ____     __                 ")
