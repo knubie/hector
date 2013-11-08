@@ -165,10 +165,6 @@ module Hector
       "#{nickname}!#{username}@#{hostname}"
     end
 
-    def username
-      "~#{nickname}"
-    end
-
     def who
       #"#{identity.username} #{Hector.server_name} #{Hector.server_name} #{nickname} H :0 #{realname}"
       "#{identity.username} #{hostname} #{hostname} #{nickname} H :0 #{realname}"
