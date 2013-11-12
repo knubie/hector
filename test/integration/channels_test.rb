@@ -179,6 +179,17 @@ module Hector
       end
     end
 
+    test :"only ops can send messages to moderated channels" do
+      authenticated_connections(:join => "#test") do |c1, c2|
+        c1.receive_line "JOIN #test"
+        c1.receive_line "MODE #test +m"
+        c2.receive_line "PRIVMSG #test :hello"
+        assert_cannot_send_to_channel c2, "#test"
+        c1.receive_line "PRIVMSG #test :hello"
+        assert_sent_to c2, ":user1!sam@hector.irc PRIVMSG #test :hello"
+      end
+    end
+
     test :"users can be kicked from channels" do
       authenticated_connections(:join => "#test") do |c1, c2|
         c1.receive_line "KICK #test user2 :Get out"

@@ -100,9 +100,17 @@ module Hector
       @modes.include?('i')
     end
 
+    def moderated?
+      @modes.include?('m')
+    end
+
     def deliver(message_type, session, options)
       if has_session?(session)
-        broadcast(message_type, name, options.merge(:except => session))
+        if !moderated? || (moderated? && ops.include?(session))
+          broadcast(message_type, name, options.merge(:except => session))
+        else
+          raise CannotSendToChannel, name
+        end
       else
         raise CannotSendToChannel, name
       end
@@ -118,7 +126,7 @@ module Hector
 
     def join(session)
       return if has_session?(session)
-      if user_sessions.empty? || op_users.include?(session.identity.username)
+      if user_sessions.empty? || op_users.include?(session.username)
         set_op(session)
       end
       user_sessions.push(session)
