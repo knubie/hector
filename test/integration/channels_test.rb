@@ -179,6 +179,15 @@ module Hector
       end
     end
 
+    test :"users cannot join channels they've been banned from" do
+      authenticated_connections do |c1, c2|
+        c1.receive_line "JOIN #test"
+        c1.receive_line "MODE #test +b sam"
+        c2.receive_line "JOIN #test"
+        assert_sent_to c2, ":hector.irc 474 #test You've been banned from this channel."
+      end
+    end
+
     test :"only ops can send messages to moderated channels" do
       authenticated_connections(:join => "#test") do |c1, c2|
         c1.receive_line "JOIN #test"
