@@ -26,5 +26,5 @@ module Hector
   class CannotSendToChannel < IrcError("404", :text => "Cannot send to channel"); end
   class ErroneousNickname   < IrcError("432", :text => "Erroneous nickname"); end
   class NicknameInUse       < IrcError("433", "*", :text => "Nickname is already in use"); end
-  class InvalidPassword     < IrcError("464", :text => "Invalid password", :fatal => true); end
+  class InvalidPassword     < IrcError("464", :text => "Invalid password. If you don't have a username/password please visit www.jupe.io to sign up.", :fatal => true); end
 end
