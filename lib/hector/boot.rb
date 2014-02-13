@@ -29,7 +29,7 @@ module Hector
     end
 
     def load_application
-      $:.unshift Hector.root.join("lib")
+      $:.unshift Hector.root.join("lib").to_s
       load Hector.root.join("init.rb")
     end
 
@@ -49,7 +49,7 @@ if Hector.root
   Hector.lib = vendor_lib if vendor_lib.exist?
 end
 
-$:.unshift Hector.lib
+$:.unshift Hector.lib.to_s
 
 begin
   require "hector"
