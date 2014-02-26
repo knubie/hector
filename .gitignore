@@ -6,3 +6,4 @@ config
 *.swo
 .rvmrc
 *.hect
+setup.sh
