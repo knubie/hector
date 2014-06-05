@@ -122,7 +122,11 @@ module Hector
     end
 
     def realname
-      nickname
+      @realname
+    end
+
+    def setname(new_name)
+      @realname = new_name
     end
 
     def receive(request)
