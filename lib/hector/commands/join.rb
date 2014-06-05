@@ -4,7 +4,10 @@ module Hector
       def on_join
         request.args.first.split(/,(?=[#&+!])/).each do |channel_name|
           channel = Channel.find_or_create(channel_name)
-          if !channel.invite_only? || (channel.invite_only? && channel.invites.include?(self))
+          if !channel.invite_only? ||
+          (channel.invite_only? &&
+          (channel.user_sessions.include?(self) ||
+          channel.invites.include?(self)))
             unless channel.ban_list.include?(self.username)
               if channel.join(self)
                 channel.broadcast(:join, :source => source, :text => channel.name)
