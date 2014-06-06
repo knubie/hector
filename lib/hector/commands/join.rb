@@ -6,7 +6,7 @@ module Hector
           channel = Channel.find_or_create(channel_name)
           if !channel.invite_only? ||
           (channel.invite_only? &&
-          (channel.user_sessions.include?(self) ||
+          (channel.users.include?(self.username) ||
           channel.invites.include?(self)))
             unless channel.ban_list.include?(self.username)
               if channel.join(self)

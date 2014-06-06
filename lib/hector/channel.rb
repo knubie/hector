@@ -156,6 +156,13 @@ module Hector
       end
     end
 
+    def users
+      user_sessions.map do |session|
+        #session.nickname
+        session.username
+      end
+    end
+
     def part(session)
       user_sessions.delete(session)
       destroy if user_sessions.empty?
