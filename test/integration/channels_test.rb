@@ -64,10 +64,10 @@ module Hector
     end
 
     test :"joining a channel should send session nicknames" do
-      authenticated_connections(:join => "#test") do |c1, c2, c3|
-        assert_sent_to c1, ":hector.irc 353 user1 = #test :@user1"
-        assert_sent_to c2, ":hector.irc 353 user2 = #test :@user1 user2"
-        assert_sent_to c3, ":hector.irc 353 user3 = #test :@user1 user2 user3"
+      authenticated_connections(:users => ["sam", "clint", "matt"], :join => "#test") do |c1, c2, c3|
+        assert_sent_to c1, ":hector.irc 353 sam = #test :@sam"
+        assert_sent_to c2, ":hector.irc 353 clint = #test :@sam clint"
+        assert_sent_to c3, ":hector.irc 353 matt = #test :@sam clint matt"
       end
     end
 
@@ -85,7 +85,7 @@ module Hector
     end
 
     test :"only channel operators can set channel modes" do
-      authenticated_connections(:join => "#test") do |c1, c2|
+      authenticated_connections(:users => ["sam", "clint", "matt"], :join => "#test") do |c1, c2|
         c2.receive_line "MODE #test +s"
         assert_sent_to c2, ":hector.irc 482 #test You're not a channel operator."
       end
@@ -152,30 +152,30 @@ module Hector
     end
 
     test :"only ops can invite users to +i channels" do
-      authenticated_connections do |c1, c2, c3|
+      authenticated_connections(:users => ["sam", "clint", "matt"]) do |c1, c2, c3|
         c1.receive_line "JOIN #test"
         c2.receive_line "JOIN #test"
         c1.receive_line "MODE #test +i"
 
-        c1.receive_line "INVITE user3 #test :Join us"
-        assert_sent_to c1, ":hector.irc 341 user3 #test"
+        c1.receive_line "INVITE matt #test :Join us"
+        assert_sent_to c1, ":hector.irc 341 matt #test"
         
-        c2.receive_line "INVITE user3 #test :Join us"
+        c2.receive_line "INVITE matt #test :Join us"
         assert_sent_to c2, ":hector.irc 482 #test You must be a channel operator to invite users."
       end
     end
 
     test :"users cannot join +i channels unless they're invited" do
-      authenticated_connections do |c1, c2, c3|
+      authenticated_connections(:users => ["sam", "clint", "matt"]) do |c1, c2, c3|
         c1.receive_line "JOIN #test"
         c1.receive_line "MODE #test +i"
-        c1.receive_line "INVITE user3 #test :Join us"
+        c1.receive_line "INVITE matt #test :Join us"
 
         c2.receive_line "JOIN #test"
         assert_sent_to c2, ":hector.irc 473 #test You must be invited to join this channel."
 
         c3.receive_line "JOIN #test"
-        assert_sent_to c3, ":user3!sam@hector.irc JOIN :#test"
+        assert_sent_to c3, ":matt!matt@hector.irc JOIN :#test"
       end
     end
 
@@ -189,14 +189,17 @@ module Hector
     end
 
     test :"only ops can send messages to moderated channels" do
-      authenticated_connections(:join => "#test") do |c1, c2|
-        c1.receive_line "JOIN #test"
+      authenticated_connections(:users => ["sam", "clint", "matt"], :join => "#test") do |c1, c2, c3|
+      #authenticated_connections(:join => "#test") do |c1, c2|
         c1.receive_line "MODE #test +m"
         c2.receive_line "PRIVMSG #test :hello"
         assert_cannot_send_to_channel c2, "#test"
         c1.receive_line "PRIVMSG #test :hello"
-        assert_sent_to c2, ":user1!sam@hector.irc PRIVMSG #test :hello"
+        assert_sent_to c2, ":sam!sam@hector.irc PRIVMSG #test :hello"
       end
+    end
+
+    test :"only ops can change channel topic" do
     end
 
     test :"users can be kicked from channels" do
@@ -207,8 +210,8 @@ module Hector
     end
 
     test :"only channel operators can kick" do
-      authenticated_connections(:join => "#test") do |c1, c2|
-        c2.receive_line "KICK #test user1 :Get out"
+      authenticated_connections(:users => ["sam", "clint"], :join => "#test") do |c1, c2|
+        c2.receive_line "KICK #test sam :Get out"
         assert_sent_to c2, ":hector.irc 482 #test You're not a channel operator."
       end
     end
@@ -275,18 +278,21 @@ module Hector
     end
 
     test :"names command should send session nicknames" do
-      authenticated_connections(:join => "#test") do |c1, c2, c3|
+      authenticated_connections(:users => ["sam", "clint", "matt"], :join => "#test") do |c1, c2, c3|
         c1.receive_line "NAMES #test"
-        assert_sent_to c1, ":hector.irc 353 user1 = #test :@user1 user2 user3"
-        assert_sent_to c1, ":hector.irc 366 user1 #test :"
+        assert_sent_to c1, ":hector.irc 353 sam = #test :@sam clint matt"
+        assert_sent_to c1, ":hector.irc 366 sam #test :"
       end
     end
 
     test :"names command should be split into 512-byte responses" do
+      authenticated_connection("clint", "clint").tap do |c|
+        c.receive_line "JOIN #test"
+      end
       authenticated_connections(:join => "#test") do |c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c31, c32, c33, c34, c35, c36, c37, c38, c39, c40, c41, c42, c43, c44, c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58, c59, c60, c61, c62, c63, c64, c65, c66, c67, c68, c69, c70|
         c1.receive_line "NAMES #test"
-        assert_sent_to c1, ":hector.irc 353 user1 = #test :@user1 user2 user3 user4 user5 user6 user7 user8 user9 user10 user11 user12 user13 user14 user15 user16 user17 user18 user19 user20 user21 user22 user23 user24 user25 user26 user27 user28 user29 user30 user31 user32 user33 user34 user35 user36 user37 user38 user39 user40 user41 user42 user43 user44 user45 user46 user47 user48 user49 user50 user51 user52 user53 user54 user55 user56 user57 user58 user59 user60 user61 user62 user63 user64 user65 user66 user67 user68 user69"
-        assert_sent_to c1, ":hector.irc 353 user1 = #test :user70"
+        assert_sent_to c1, ":hector.irc 353 user1 = #test :@clint user1 user2 user3 user4 user5 user6 user7 user8 user9 user10 user11 user12 user13 user14 user15 user16 user17 user18 user19 user20 user21 user22 user23 user24 user25 user26 user27 user28 user29 user30 user31 user32 user33 user34 user35 user36 user37 user38 user39 user40 user41 user42 user43 user44 user45 user46 user47 user48 user49 user50 user51 user52 user53 user54 user55 user56 user57 user58 user59 user60 user61 user62 user63 user64 user65 user66 user67 user68"
+        assert_sent_to c1, ":hector.irc 353 user1 = #test :user69 user70"
         assert_sent_to c1, ":hector.irc 366 user1 #test :"
       end
     end
@@ -559,10 +565,13 @@ module Hector
     end if String.method_defined?(:force_encoding)
 
     test :"names command with unicode nicks should still be split into 512-byte responses" do
+      authenticated_connection("clint", "clint").tap do |c|
+        c.receive_line "JOIN #test"
+      end
       authenticated_connections(:join => "#test", :nickname => "⌘lee") do |c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30, c31, c32, c33, c34, c35, c36, c37, c38, c39, c40, c41, c42, c43, c44, c45, c46, c47, c48, c49, c50, c51, c52, c53, c54, c55, c56, c57, c58, c59, c60, c61, c62, c63, c64, c65, c66, c67, c68, c69, c70|
         c1.receive_line "NAMES #test"
 
-        first_line = ":hector.irc 353 ⌘lee1 = #test :@⌘lee1 ⌘lee2 ⌘lee3 ⌘lee4 ⌘lee5 ⌘lee6 ⌘lee7 ⌘lee8 ⌘lee9 ⌘lee10 ⌘lee11 ⌘lee12 ⌘lee13 ⌘lee14 ⌘lee15 ⌘lee16 ⌘lee17 ⌘lee18 ⌘lee19 ⌘lee20 ⌘lee21 ⌘lee22 ⌘lee23 ⌘lee24 ⌘lee25 ⌘lee26 ⌘lee27 ⌘lee28 ⌘lee29 ⌘lee30 ⌘lee31 ⌘lee32 ⌘lee33 ⌘lee34 ⌘lee35 ⌘lee36 ⌘lee37 ⌘lee38 ⌘lee39 ⌘lee40 ⌘lee41 ⌘lee42 ⌘lee43 ⌘lee44 ⌘lee45 ⌘lee46 ⌘lee47 ⌘lee48 ⌘lee49 ⌘lee50 ⌘lee51 ⌘lee52 ⌘lee53\r\n"
+        first_line = ":hector.irc 353 ⌘lee1 = #test :@clint ⌘lee1 ⌘lee2 ⌘lee3 ⌘lee4 ⌘lee5 ⌘lee6 ⌘lee7 ⌘lee8 ⌘lee9 ⌘lee10 ⌘lee11 ⌘lee12 ⌘lee13 ⌘lee14 ⌘lee15 ⌘lee16 ⌘lee17 ⌘lee18 ⌘lee19 ⌘lee20 ⌘lee21 ⌘lee22 ⌘lee23 ⌘lee24 ⌘lee25 ⌘lee26 ⌘lee27 ⌘lee28 ⌘lee29 ⌘lee30 ⌘lee31 ⌘lee32 ⌘lee33 ⌘lee34 ⌘lee35 ⌘lee36 ⌘lee37 ⌘lee38 ⌘lee39 ⌘lee40 ⌘lee41 ⌘lee42 ⌘lee43 ⌘lee44 ⌘lee45 ⌘lee46 ⌘lee47 ⌘lee48 ⌘lee49 ⌘lee50 ⌘lee51 ⌘lee52 ⌘lee53\r\n"
         second_line = ":hector.irc 353 ⌘lee1 = #test :⌘lee54 ⌘lee55 ⌘lee56 ⌘lee57 ⌘lee58 ⌘lee59 ⌘lee60 ⌘lee61 ⌘lee62 ⌘lee63 ⌘lee64 ⌘lee65 ⌘lee66 ⌘lee67 ⌘lee68 ⌘lee69 ⌘lee70\r\n"
 
         assert_sent_to c1, first_line

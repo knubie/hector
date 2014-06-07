@@ -13,19 +13,31 @@ module Hector
       Channel.reset!
     end
 
-    def authenticated_connection(nickname = "sam")
+    def authenticated_connection(nickname = "sam", username = "sam")
       connection.tap do |c|
-        authenticate! c, nickname
+        authenticate! c, nickname, username
       end
     end
 
     def authenticated_connections(options = {}, &block)
       nickname = options[:nickname] || "user"
-      connections = Array.new(block.arity) do |i|
-        authenticated_connection("#{nickname}#{i+1}").tap do |c|
-          if options[:join]
-            Array(options[:join]).each do |channel|
-              c.receive_line("JOIN #{channel}")
+      if options[:users]
+        connections = options[:users].map do |user|
+          authenticated_connection(user, user).tap do |c|
+            if options[:join]
+              Array(options[:join]).each do |channel|
+                c.receive_line("JOIN #{channel}")
+              end
+            end
+          end
+        end
+      else
+        connections = Array.new(block.arity) do |i|
+          authenticated_connection("#{nickname}#{i+1}").tap do |c|
+            if options[:join]
+              Array(options[:join]).each do |channel|
+                c.receive_line("JOIN #{channel}")
+              end
             end
           end
         end
@@ -34,9 +46,9 @@ module Hector
       yield *connections
     end
 
-    def authenticate!(connection, nickname)
+    def authenticate!(connection, nickname = "sam", username = "sam")
       pass! connection
-      user! connection
+      user! connection, username
       nick! connection, nickname
     end
 

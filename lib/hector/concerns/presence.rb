@@ -40,6 +40,8 @@ module Hector
           respond_with("005", nickname, "PREFIX=(ov)@+", "CHANTYPES=#&", :text => "are supported by this server")
           respond_with("375")
           respond_with("422", :text => "MOTD File is missing")
+          respond_with("372", :text => "This server is in beta,")
+          respond_with("372", :text => "please report any issues to #issues")
           #respond_with("372", :text => "     _     ____     __                 ")
           #respond_with("372", :text => "    (_)___/ / /__  / /__________  ____ ")
           #respond_with("372", :text => "   / / __  / / _ \\/ __/ ___/ __ \\/ __ \\")
