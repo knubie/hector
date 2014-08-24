@@ -137,12 +137,16 @@ module Hector
       if user_sessions.empty? || op_users.include?(session.username)
         set_op(session)
       end
+      # If the channel is private and the user leaves, we want them to be able
+      # to rejoin, so we'll add them to the invites array. Might want to
+      # refactor this in the future to be more explicit.
+      @invites.push(session)
       user_sessions.push(session)
     end
 
     def invite(session)
-      return if @invites.include?(session)
-      invites.push(session)
+      return if invites.include?(session)
+      @invites.push(session)
     end
 
     def nicknames

@@ -190,7 +190,6 @@ module Hector
 
     test :"only ops can send messages to moderated channels" do
       authenticated_connections(:users => ["sam", "clint", "matt"], :join => "#test") do |c1, c2, c3|
-      #authenticated_connections(:join => "#test") do |c1, c2|
         c1.receive_line "MODE #test +m"
         c2.receive_line "PRIVMSG #test :hello"
         assert_cannot_send_to_channel c2, "#test"
@@ -200,6 +199,16 @@ module Hector
     end
 
     test :"only ops can change channel topic" do
+      authenticated_connections(:users => ["sam", "clint"], :join => "#test") do |c1, c2|
+        c1.receive_line "TOPIC #test :Cool topic."
+        assert_cannot_send_to_channel c2, "#test"
+        c1.receive_line "PRIVMSG #test :hello"
+        assert_sent_to c2, ":sam!sam@hector.irc PRIVMSG #test :hello"
+      end
+    end
+
+    test :"user already in a +i channel can join as the same user from a different session" do
+      assert false, "implement me"
     end
 
     test :"users can be kicked from channels" do
